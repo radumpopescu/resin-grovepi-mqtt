@@ -3,7 +3,6 @@ var Commands = GrovePi.commands
 var Board = GrovePi.board
 var LightAnalogSensor = GrovePi.sensors.LightAnalog
 var DHTDigitalSensor = GrovePi.sensors.DHTDigital
-var GenericDigitalOutputSensor = GrovePi.sensors.DigitalOutput
 
 class Pi {
     constructor() {
@@ -17,7 +16,6 @@ class Pi {
                 if (res) {
                     that.light = new LightAnalogSensor(0);
                     that.temp = new DHTDigitalSensor(4, DHTDigitalSensor.VERSION.DHT22, DHTDigitalSensor.CELSIUS)
-                    that.relay = new GenericDigitalOutputSensor(7)
                 }
             }
         })
@@ -35,10 +33,13 @@ class Pi {
 
     setRelay(status){
         if (status){
-            this.relay.turnOn();
+            // GenericDigitalOutputSensor has a bug so turning it manually
+            this.board.pinMode(7, this.board.OUTPUT)
+            this.board.writeBytes([2, 7, 1, 0]);
         }
         else{
-            this.relay.turnOff();
+            this.board.pinMode(7, this.board.OUTPUT)
+            this.board.writeBytes([2, 7, 0, 0]);
         }
 
     }

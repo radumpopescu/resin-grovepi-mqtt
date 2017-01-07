@@ -26,7 +26,7 @@ function relayCB(message){
 }
 
 
-setInterval(update, 5000);
+setInterval(update, 30000);
 
 function update(){
 	data = pi.getData();
