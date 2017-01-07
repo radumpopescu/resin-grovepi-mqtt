@@ -1,7 +1,9 @@
+var sleep = require('sleep');
 var GrovePi = require('node-grovepi').GrovePi
 
-// var Commands = GrovePi.commands
-// var Board = GrovePi.board
+var Commands = GrovePi.commands
+var Board = GrovePi.board
+var LightAnalogSensor = GrovePi.sensors.LightAnalog
 
 var board = new Board({
     debug: true,
@@ -23,4 +25,8 @@ var board = new Board({
     }
   })
 
-console.log("started");
+while (true){
+	board.init();
+	sleep.sleep(5);	
+}
+
