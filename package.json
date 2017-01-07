@@ -8,5 +8,6 @@
     "start": "node main.js"
   },
   "dependencies": {
+    "node-grovepi": "*"
   }
 }
