@@ -9,6 +9,6 @@
   },
   "dependencies": {
     "node-grovepi": "*",
-    "sleep":"*"
+    "mqtt":"*"
   }
 }

@@ -1,32 +1,50 @@
-var sleep = require('sleep');
-var GrovePi = require('node-grovepi').GrovePi
+let host = process.env.MQTT_HOST;
+let user = process.env.MQTT_USER;
+let password = process.env.MQTT_PASS;
+let prefix = process.env.MQTT_PREFIX;
 
-var Commands = GrovePi.commands
-var Board = GrovePi.board
-var LightAnalogSensor = GrovePi.sensors.LightAnalog
+let Pi = require('./pi.js');
+let Mqtt = require('./mqtt.js');
 
-var board = new Board({
-    debug: true,
-    onError: function(err) {
-      console.log('Something wrong just happened')
-      console.log(err)
-    },
-    onInit: function(res) {
-      if (res) {
-        console.log('GrovePi Version :: ' + board.version())
+var pi = new Pi()
+var mqtt = new Mqtt(host, user, password, prefix, [
+		{
+			"topic": "relay",
+			"callback": relayCB
+		}
+	]);
 
-        var lightSensor = new LightAnalogSensor(0)
-        console.log('Light Analog Sensor (start watch)')
-        lightSensor.on('change', function(res) {
-          console.log('Light onChange value=' + res)
-        })
-        lightSensor.watch()
-      }
-    }
-  })
-
-while (true){
-	board.init();
-	sleep.sleep(5);	
+function relayCB(message){
+	if (message === "on"){
+		pi.setRelay(true);
+		console.log("Turning on");
+	}
+	else{
+		pi.setRelay(false);
+		console.log("Turning off");
+	}
 }
+
+
+setInterval(update, 5000);
+
+function update(){
+	data = pi.getData();
+	mqtt.send([
+		{
+			"topic": "light",
+			"message": data.light
+		}, 
+		{
+			"topic": "temperature",
+			"message": data.temp
+		}, 
+		{
+			"topic": "humidity",
+			"message": data.humidity
+		}
+	]);
+}
+
+
 
